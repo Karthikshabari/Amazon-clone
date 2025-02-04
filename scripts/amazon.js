@@ -1,4 +1,4 @@
-import {cart,addToCart} from '../data/cart.js';
+import {cart, cartAddition} from '../data/cart.js';
 /*
 alternate
 import * as cartModule from ;
@@ -11,7 +11,10 @@ import { convert } from './common_fuction/numberrounding.js';
 
 let html='';
 
-
+/*window.addEventListener('load',()=>{
+  localStorage.removeItem('cart');
+});
+*/
 products.forEach((product)=>{
     html+=`
          <div class="product-container">
@@ -37,7 +40,7 @@ products.forEach((product)=>{
           </div>
 
           <div class="product-quantity-container">
-            <select>
+            <select class="js-container-${product.id}">
               <option selected value="1">1</option>
               <option value="2">2</option>
               <option value="3">3</option>
@@ -53,7 +56,7 @@ products.forEach((product)=>{
 
           <div class="product-spacer"></div>
 
-          <div class="added-to-cart">
+          <div class="added-to-cart js-added-${product.id}">
             <img src="images/icons/checkmark.png">
             Added
           </div>
@@ -67,46 +70,27 @@ products.forEach((product)=>{
 
 });
 
-function updateCartQuantity(){
-  let cartQuantity=0;
-
-      cart.forEach((item)=>{
-        cartQuantity += item.quantity;
-      });
-
-      document.querySelector('.js-qunatity').innerHTML =cartQuantity;
-}
-
-
 document.querySelector('.js-products').innerHTML=html;
 
-let q=0;
+let timeid=null;
 
 document.querySelectorAll('.js-cart').forEach((button)=>{
   button.addEventListener('click',()=>{
-
     const productId=button.dataset.productId;
-    addToCart(productId);
-    /*let i=0;
-
-    for(i=0; i<cart.length; i++){
-      if(cart[i].productId===button.dataset.id){
-        cart[i].quanity++;
-        console.log(cart);
-        q++;
-        document.querySelector('.js-qunatity').innerHTML = q;
-        return;
-      }
+    let value=document.querySelector(`.js-container-${productId}`).value;
+    cartAddition(productId,value);
+    document.querySelector(`.js-added-${productId}`).classList.add('added');
+    if(timeid){
+      clearTimeout(timeid);
     }
-    if(i===cart.length){
-      cart.push({
-        productId:button.dataset.id,
-        quanity:1
-      });
-    
-    }*/
-    updateCartQuantity();
+    timeid=setTimeout(()=>{
+      document.querySelector(`.js-added-${productId}`).classList.remove('added');
+    },1000);
   })
 })
+
+
+
+
 
 

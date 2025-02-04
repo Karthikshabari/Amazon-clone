@@ -26,7 +26,7 @@ cart.forEach((item) => {
     let index = find(item.productId); // Pass the productId to the find function
     if (index !== -1) {
         let object = products[index];
-        console.log('Product Object:', object); // Log the product object
+        //console.log('Product Object:', object); // Log the product object
 
         html += `
             <div class="cart-item-container js-${item.productId}" data-product-id="${item.productId}">
@@ -99,6 +99,7 @@ cart.forEach((item) => {
 });
 
 document.querySelector('.js-order').innerHTML = html;
+let quantity=0;
 
 // Attach event listeners to the dynamically added elements
 document.querySelectorAll('.js-delete').forEach((item) => {
@@ -106,6 +107,17 @@ document.querySelectorAll('.js-delete').forEach((item) => {
         const id = event.target.dataset.id;
         remove(id);// removing elements from the cart
         document.querySelector(`.js-${id}`).remove();
+        quantity=quantity-1;
+        document.querySelector('.js-checkout').innerHTML=`${quantity}`;
     });
 });
+
+
+cart.forEach((item)=>{
+    quantity+=item.quantity;
+});
+
+document.querySelector('.js-checkout').innerHTML=`${quantity}`;
+
+
 
