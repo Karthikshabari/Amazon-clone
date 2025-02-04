@@ -209,3 +209,13 @@
   margin-top: 11px;
   margin-bottom: 15px;
 }
+
+
+.js-delete-o{
+  opacity: 0;
+}
+
+.text{
+  display: inline;
+  width: 20px;
+}

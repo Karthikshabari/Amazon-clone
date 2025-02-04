@@ -44,14 +44,16 @@ cart.forEach((item) => {
                         </div>
                         <div class="product-quantity">
                             <span>
-                                Quantity: <span class="quantity-label">${item.quantity}</span>
+                                Quantity: <span class="quantity-label js-change-${item.productId}">${item.quantity}</span>
                             </span>
-                            <span class="update-quantity-link link-primary">
+                            <span class="update-quantity-link link-primary js-update" data-id="${item.productId}" >
                                 Update
                             </span>
+                            <span class="js-inputbox"></span>
                             <span class="delete-quantity-link link-primary js-delete" data-id="${item.productId}">
                                 Delete
                             </span>
+                            
                         </div>
                     </div>
                     <div class="delivery-options">
@@ -101,23 +103,66 @@ cart.forEach((item) => {
 document.querySelector('.js-order').innerHTML = html;
 let quantity=0;
 
+console.log("Before");
+console.log(cart);
+
 // Attach event listeners to the dynamically added elements
 document.querySelectorAll('.js-delete').forEach((item) => {
     item.addEventListener('click', (event) => {
         const id = event.target.dataset.id;
-        remove(id);// removing elements from the cart
-        document.querySelector(`.js-${id}`).remove();
-        quantity=quantity-1;
-        document.querySelector('.js-checkout').innerHTML=`${quantity}`;
+        let del=remove(id);// removing elements from the cart
+        if(del){
+            document.querySelector(`.js-${id}`).remove();
+            quantity=quantity-1;
+        }
+        if(!del){
+            const val=document.querySelector(`.js-change-${id}`).innerHTML;
+            document.querySelector(`.js-change-${id}`).innerHTML=val-1;
+            quantity=quantity-1;
+        }
+    document.querySelector('.js-checkout').innerHTML=`${quantity}`;
     });
 });
 
 
 cart.forEach((item)=>{
-    quantity+=item.quantity;
+    quantity+=Number(item.quantity);
 });
 
 document.querySelector('.js-checkout').innerHTML=`${quantity}`;
 
+let saveHtml=   `<span> <input type="textbox" class="text input"> 
+    <p class="text save">Save</p>
+<span>`;
+
+
+document.querySelectorAll('.js-update').forEach((item)=>{
+    item.addEventListener('click',(event)=>{
+        const id=event.target.dataset.id;
+        //console.log("Hi"+id);
+        //console.log(cart);
+        document.querySelector('.js-inputbox').innerHTML=saveHtml;
+        document.querySelector('.save').addEventListener('click',()=>{
+            //console.log("Befire"+localStorage.getItem('cart'));
+            let value=document.querySelector('.input').value;
+            cart.forEach((cartItem)=>{
+                if(cartItem.productId===id){
+                    cartItem.quantity=value;
+                }
+            });
+            console.log(cart);
+            localStorage.setItem('cart',JSON.stringify(cart));
+            let quantity=Number(0);
+            cart.forEach((item)=>{
+            quantity+=Number(item.quantity);
+            });
+            document.querySelector('.js-checkout').innerHTML=`${quantity}`;
+
+            document.querySelector(`.js-change-${id}`).innerHTML=value;//check
+            //console.log(localStorage.getItem('cart'));
+            document.querySelector('.js-inputbox').innerHTML=``;
+        });
+    });
+});
 
 

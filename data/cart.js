@@ -1,8 +1,8 @@
+//localStorage.removeItem('cart');
 export let cart = JSON.parse(localStorage.getItem('cart')) || [];
 
 let q=0;
 export function cartAddition(id,value){ 
-  console.log(q);
   q=Number(q)+Number(value);
   let i=0;
 
@@ -17,7 +17,7 @@ export function cartAddition(id,value){
   if(i===cart.length){
     cart.push({
       productId:id,
-      quantity:1
+      quantity:value
     });
   }
   document.querySelector('.js-qunatity').innerHTML = q;
@@ -28,16 +28,27 @@ export function cartAddition(id,value){
 
 export function remove(id){
   //console.log('Deleting product with ID:', id);
-  const newCart=[];
+  console.log(cart);
+  let del=true;
   cart.forEach((cartItem)=>{
-
-      if(cartItem.productId !== id){
-          newCart.push(cartItem);
-      }
-
+    if(cartItem.productId === id){
+        let q=cartItem.quantity;
+        if(q>1){
+          cartItem.quantity=cartItem.quantity-1;
+          del=false;
+        }else if(q==1){
+            let newCart=[];
+            cart.forEach((item)=>{
+              if(item.productId!==id){
+                newCart.push(item);
+              }
+            });
+            cart=newCart;
+        }
+    }
   });
+  console.log(del);
   console.log(cart);
-  cart=newCart;
   localStorage.setItem('cart', JSON.stringify(cart));
-  console.log(cart);
+  return del;
 }
