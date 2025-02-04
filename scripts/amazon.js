@@ -1,4 +1,4 @@
-import {cart,addToCart  } from '../data/cart.js';
+import {cart,addToCart} from '../data/cart.js';
 /*
 alternate
 import * as cartModule from ;
@@ -7,6 +7,7 @@ cartModule.cart;
 cartModule.addTocart('id');
 */
 import {products} from '../data/products.js';
+import { convert } from './common_fuction/numberrounding.js';
 
 let html='';
 
@@ -32,7 +33,7 @@ products.forEach((product)=>{
           </div>
 
           <div class="product-price">
-            Rs.${(product.price/100).toFixed(2)};
+            Rs.${convert(product.price)};
           </div>
 
           <div class="product-quantity-container">
@@ -57,7 +58,7 @@ products.forEach((product)=>{
             Added
           </div>
 
-          <button class="add-to-cart-button button-primary js-cart" data-id="${product.id}">
+          <button class="add-to-cart-button button-primary js-cart" data-product-id="${product.id}">
             Add to Cart
           </button>
         </div>
@@ -107,4 +108,5 @@ document.querySelectorAll('.js-cart').forEach((button)=>{
     updateCartQuantity();
   })
 })
+
 
