@@ -1,7 +1,17 @@
 import { remove } from "../data/cart.js";
 import { products } from "../data/products.js";
 import { convert } from "./common_fuction/numberrounding.js";
+import dayjs from 'https://esm.sh/dayjs';//esm module
 
+const now = dayjs();
+let free = now.add(7, 'day');
+free = free.format('dddd, MMMM D');
+
+let paid=now.add(3,'day');
+paid=paid.format('dddd,MMMM D');
+
+let fast=now.add(1,'day');
+fast=fast.format('dddd,MMMM D');
 
 const cart = JSON.parse(localStorage.getItem('cart')) || [];
 
@@ -30,8 +40,8 @@ cart.forEach((item) => {
 
         html += `
             <div class="cart-item-container js-${item.productId}" data-product-id="${item.productId}">
-                <div class="delivery-date">
-                    Delivery date: Tuesday, June 21
+                <div class="delivery-date js-delivery-${item.productId}">
+                    Delivery date: ${free}
                 </div>
                 <div class="cart-item-details-grid">
                     <img class="product-image" src="${object.image}">
@@ -56,15 +66,15 @@ cart.forEach((item) => {
                             
                         </div>
                     </div>
-                    <div class="delivery-options">
+                    <div class="delivery-options js-radio" data-id=${item.productId}>
                         <div class="delivery-options-title">
                             Choose a delivery option:
                         </div>
                         <div class="delivery-option">
-                            <input type="radio" class="delivery-option-input" name="delivery-option-${item.productId}">
+                            <input type="radio" class="delivery-option-input js-radio-${item.productId}" name="delivery-option-${item.productId}" data-r=1>
                             <div>
-                                <div class="delivery-option-date">
-                                    Tuesday, June 21
+                                <div class="delivery-option-date js-date-1">
+                                    ${free}
                                 </div>
                                 <div class="delivery-option-price">
                                     FREE Shipping
@@ -72,10 +82,10 @@ cart.forEach((item) => {
                             </div>
                         </div>
                         <div class="delivery-option">
-                            <input type="radio" class="delivery-option-input" name="delivery-option-${item.productId}">
+                            <input type="radio" class="delivery-option-input js-radio-${item.productId}" name="delivery-option-${item.productId}" data-r=2>
                             <div>
-                                <div class="delivery-option-date">
-                                    Wednesday, June 15
+                                <div class="delivery-option-date js-date-2">
+                                    ${paid}
                                 </div>
                                 <div class="delivery-option-price">
                                     $4.99 - Shipping
@@ -83,10 +93,10 @@ cart.forEach((item) => {
                             </div>
                         </div>
                         <div class="delivery-option">
-                            <input type="radio" class="delivery-option-input" name="delivery-option-${item.productId}">
+                            <input type="radio" class="delivery-option-input js-radio-${item.productId}" name="delivery-option-${item.productId}" data-r=3>
                             <div>
-                                <div class="delivery-option-date">
-                                    Monday, June 13
+                                <div class="delivery-option-date js-date-3">
+                                    ${fast}
                                 </div>
                                 <div class="delivery-option-price">
                                     $9.99 - Shipping
@@ -165,4 +175,20 @@ document.querySelectorAll('.js-update').forEach((item)=>{
     });
 });
 
+document.querySelectorAll('.js-radio').forEach((item)=>{
+    const id=item.dataset.id;
+    let value;
+    console.log(132);
+    document.querySelectorAll(`.js-radio-${id}`).forEach((radio)=>{
+        radio.addEventListener('click',(r)=>{
+            if(radio.checked){
+                //console.log(radio.checked);
+                const check=radio.dataset.r;
+                console.log(check);
+                value=document.querySelector(`.js-date-${check}`).innerHTML;
+                document.querySelector(`.js-delivery-${id}`).innerHTML=`Delivery date:${value}`;
+            }
+        })
+    })    
 
+});

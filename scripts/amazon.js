@@ -11,10 +11,8 @@ import { convert } from './common_fuction/numberrounding.js';
 
 let html='';
 
-/*window.addEventListener('load',()=>{
-  localStorage.removeItem('cart');
-});
-*/
+
+
 products.forEach((product)=>{
     html+=`
          <div class="product-container">
