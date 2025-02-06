@@ -219,3 +219,7 @@
   display: inline;
   width: 20px;
 }
+
+.order-css{
+  opacity: 0;
+}

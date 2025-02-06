@@ -22,21 +22,23 @@ export function cartAddition(id,value){
   }
   document.querySelector('.js-qunatity').innerHTML = q;
   let sum=localStorage.setItem('cart', JSON.stringify(cart));
-  console.log(sum);
+  //console.log(sum);
 }
 
 
-export function remove(id){
+export function remove(id,cart){
   //console.log('Deleting product with ID:', id);
-  console.log(cart);
+  //console.log("in cart file");
+  //console.log(cart);
   let del=true;
+  //if(cart.length==0) return;
   cart.forEach((cartItem)=>{
     if(cartItem.productId === id){
         let q=cartItem.quantity;
         if(q>1){
           cartItem.quantity=cartItem.quantity-1;
           del=false;
-        }else if(q==1){
+        }else if(q<=1){
             let newCart=[];
             cart.forEach((item)=>{
               if(item.productId!==id){
@@ -47,8 +49,8 @@ export function remove(id){
         }
     }
   });
-  console.log(del);
-  console.log(cart);
+  //console.log(del);
+  console.log("Cart after delet",cart);
   localStorage.setItem('cart', JSON.stringify(cart));
   return del;
 }
