@@ -21,7 +21,7 @@ export function cartAddition(id,value){
     });
   }
   document.querySelector('.js-qunatity').innerHTML = q;
-  let sum=localStorage.setItem('cart', JSON.stringify(cart));
+  localStorage.setItem('cart', JSON.stringify(cart));
   //console.log(sum);
 }
 

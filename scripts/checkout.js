@@ -2,8 +2,24 @@ import { remove } from "../data/cart.js";
 import { products } from "../data/products.js";
 import { convert } from "./common_fuction/numberrounding.js";
 import dayjs from 'https://esm.sh/dayjs';//esm module
+export let noOfItemInCart=0;
+
+
+function find(productId) {
+    let index = -1; 
+    for (let i = 0; i < products.length; i++) {
+        if (products[i].id === productId) {
+            index = i;
+            break;
+        }
+    }
+    //console.log('Product ID:', productId, 'Index:', index); 
+    return index;
+}
+
 
 const now = dayjs();
+
 let free = now.add(7, 'day');
 free = free.format('dddd, MMMM D');
 
@@ -16,21 +32,11 @@ fast=fast.format('dddd,MMMM D');
 let cart = JSON.parse(localStorage.getItem('cart')) || [];
 
 console.log('Cart:', cart); // Log the cart to verify items are retrieved
-//console.log('Products:', products); // Log the products array
+//console.log('Products:', products); 
 
-function find(productId) {
-    let index = -1; // Initialize with -1 to indicate not found
-    for (let i = 0; i < products.length; i++) {
-        if (products[i].id === productId) {
-            index = i;
-            break;
-        }
-    }
-    //console.log('Product ID:', productId, 'Index:', index); // Log the productId and index
-    return index;
-}
 
 let html = '';
+
 
 cart.forEach((item) => {
     let index = find(item.productId); // Pass the productId to the find function
@@ -135,6 +141,7 @@ document.querySelectorAll('.js-delete').forEach((item) => {
             document.querySelector(`.js-change-${id}`).innerHTML=val-1;
             quantity=quantity-1;
         }
+        noOfItemInCart=quantity;
     document.querySelector('.js-checkout').innerHTML=`${quantity}`;
     console.log("calling shipping in delete");  
     
@@ -147,7 +154,9 @@ cart.forEach((item)=>{
     quantity+=Number(item.quantity);
 });
 
+noOfItemInCart=quantity;
 document.querySelector('.js-checkout').innerHTML=`${quantity}`;
+
 
 let saveHtml=   `<span> <input type="textbox" class="text input"> 
     <button class="text save" style="width:50px;">Save</button>
@@ -178,6 +187,7 @@ document.querySelectorAll('.js-update').forEach((item)=>{
                 cart.forEach((item)=>{
                     quantity+=Number(item.quantity);
                 });
+                noOfItemInCart=quantity;
                 document.querySelector('.js-checkout').innerHTML=`${quantity}`;
     
                 document.querySelector(`.js-change-${id}`).innerHTML=value;//check
@@ -344,7 +354,8 @@ function noOfItem(cart){
     return c;
 }
 
-
+let totalAfterTax=0;
+let arriving=[];
 function updatePrice(){
     if(cart.length==0){
         document.querySelector('.js-item-cost').innerHTML='Rs.0';
@@ -371,11 +382,13 @@ function updatePrice(){
     const first=0;
     const second=100;
     const third=150;
-    
+
+    arriving=[];
     let alreadyExist=[];
     shippingCost.forEach((array)=>{
         if(alreadyExist.length==0){
             const type=array[1];
+            arriving.push(type);
             alreadyExist.push(array[0]);
             if(type==2) shippingCharge=shippingCharge+second;
             else if(type==3) shippingCharge=shippingCharge+third;
@@ -385,18 +398,23 @@ function updatePrice(){
             alreadyExist.forEach((id)=>{
                 if(id===array[0]){
                     const type=array[1];
+                    
                     if(type==2) shippingCharge=shippingCharge+second;
                     else if(type==3) shippingCharge=shippingCharge+third;
                     newELement=false;
             }});
             if(newELement){
                 const type=array[1];
+                arriving.push(type);
                 alreadyExist.push(array[0]);
                 if(type==2) shippingCharge=shippingCharge+second;
                 else if(type==3) shippingCharge=shippingCharge+third;
             }
         }
     });
+
+    console.log("arriving",arriving);
+
 
     document.querySelector('.js-shipping-cost').innerHTML=`Rs.${shippingCharge}`;
 
@@ -406,10 +424,26 @@ function updatePrice(){
     document.querySelector('.js-after-shipping').innerHTML=`Rs.${costAfterShipping}`;
 
     const tax=costAfterShipping+(costAfterShipping/5);
+    totalAfterTax=tax.toFixed(2);
     document.querySelector('.js-tax').innerHTML=`Rs.${(costAfterShipping/5).toFixed(2)}`;
-
-    document.querySelector('.js-total').innerHTML=`Rs.${tax}`;
-
-
+    document.querySelector('.js-total').innerHTML=`Rs.${tax.toFixed(2)}`;
     }
+    //updateInfo();
 }
+
+let savedInfo=JSON.parse(localStorage.getItem('savedInfo')) || [];
+function updateInfo(){
+    let temp=[];
+    temp.push(now.format('dddd, MMMM D'));
+    temp.push(cart);
+    temp.push(totalAfterTax);
+    temp.push(arriving);
+    savedInfo.push(temp);
+    localStorage.setItem('savedInfo',JSON.stringify(savedInfo));
+}
+
+document.querySelector('.js-placed-order').addEventListener('click',()=>{
+   updateInfo();
+});
+
+
