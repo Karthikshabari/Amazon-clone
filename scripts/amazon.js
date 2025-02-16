@@ -11,8 +11,6 @@ import { convert } from './common_fuction/numberrounding.js';
 
 let html='';
 
-
-
 products.forEach((product)=>{
     html+=`
          <div class="product-container">
@@ -72,6 +70,12 @@ document.querySelector('.js-products').innerHTML=html;
 
 let timeid=null;
 
+/*
+  Here I am selecting the entire one because I can't invidually add on class for each button...what i mean is first I thought that 
+  we can do something like this "js-cart-${product.id}" but the problem is we need to add eventlistener for each button where its so length
+  the best option is to add a common class like this "js-cart" where then we have added a eventlistner for each button...
+  If whichever button is clicked that eventlistenr alone is triggered
+*/
 document.querySelectorAll('.js-cart').forEach((button)=>{
   button.addEventListener('click',()=>{
     const productId=button.dataset.productId;
